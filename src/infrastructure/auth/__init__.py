@@ -1,5 +1,6 @@
 import aiosqlite
 import bcrypt
+import sqlite3
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional
@@ -59,7 +60,13 @@ class SQLiteAuthRepository(AuthRepositoryInterface):
                 )
                 await db.commit()
             return True
-        except Exception:
+        except aiosqlite.IntegrityError as e:
+            # จัดการกรณีที่ username ซ้ำ
+            print(f"IntegrityError in create_user: {str(e)}")
+            return False
+        except Exception as e:
+            # ในกรณีที่เกิดข้อผิดพลาดอื่นๆ แสดงข้อมูลสำหรับ debug
+            print(f"Error in create_user: {type(e).__name__}: {str(e)}")
             return False
 
     async def verify_user(self, username: str, password: str) -> bool:

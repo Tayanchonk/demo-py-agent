@@ -39,17 +39,25 @@ def client():
 @pytest.fixture
 async def auth_token(client, test_db):
     """Create a test user and return auth token"""
+    # Make sure database is initialized
+    await test_db.initialize()
+    
+    # สร้างชื่อผู้ใช้งานที่เป็นเอกลักษณ์มากขึ้น
+    import uuid
+    unique_username = f"auth_user_{uuid.uuid4().hex[:8]}"
+    print(f"Registering auth user: {unique_username}")
+    
     # Register user
     response = client.post(
         "/auth/register",
-        json={"username": "testuser", "password": "testpass123"}
+        json={"username": unique_username, "password": "testpass123"}
     )
     assert response.status_code == 201
     
     # Login and get token
     response = client.post(
         "/auth/login",
-        json={"username": "testuser", "password": "testpass123"}
+        json={"username": unique_username, "password": "testpass123"}
     )
     assert response.status_code == 200
     token = response.json()["access_token"]
@@ -71,12 +79,35 @@ async def test_position(client, auth_token):
 class TestAuthEndpoints:
     """Test authentication endpoints"""
 
-    def test_register_user_success(self, client, test_db):
+    async def test_register_user_success(self, client, test_db):
         """Test successful user registration"""
+        # Make sure database is initialized
+        await test_db.initialize()
+        
+        # ตรวจสอบว่าตาราง users ถูกสร้างแล้วหรือไม่
+        async with test_db.get_connection() as conn:
+            cursor = await conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='users';")
+            table_exists = await cursor.fetchone()
+            print(f"Table users exists: {table_exists is not None}")
+            
+            # ถ้าตารางมีอยู่แล้ว ให้ตรวจสอบว่ามีข้อมูลอะไรบ้าง
+            if table_exists:
+                cursor = await conn.execute("SELECT username FROM users;")
+                users = await cursor.fetchall()
+                print(f"Existing users: {users}")
+        
+        # สร้างชื่อผู้ใช้งานที่เป็นเอกลักษณ์มากขึ้น
+        import uuid
+        unique_username = f"test_user_{uuid.uuid4().hex[:8]}"
+        print(f"Trying to register unique username: {unique_username}")
+        
         response = client.post(
             "/auth/register",
-            json={"username": "newuser", "password": "password123"}
+            json={"username": unique_username, "password": "password123"}
         )
+        
+        print(f"Response status code: {response.status_code}")
+        print(f"Response body: {response.json()}")
         
         assert response.status_code == 201
         assert response.json()["message"] == "User created successfully"
