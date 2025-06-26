@@ -26,35 +26,35 @@ db_connection = DatabaseConnection(DATABASE_PATH)
 # Services
 jwt_service = JWTService(SECRET_KEY)
 
-# Repositories
-employee_repository = SQLiteEmployeeRepository(db_connection)
-position_repository = SQLitePositionRepository(db_connection)
-auth_repository = SQLiteAuthRepository(db_connection)
-
-# Use cases
-employee_use_case = EmployeeUseCase(employee_repository, position_repository)
-position_use_case = PositionUseCase(position_repository)
-auth_use_case = AuthUseCase(auth_repository, jwt_service)
-
 
 async def get_database():
     """Get database connection dependency"""
     return db_connection
 
 
-async def get_employee_use_case() -> EmployeeUseCase:
+async def get_employee_use_case(
+    database: DatabaseConnection = Depends(get_database),
+) -> EmployeeUseCase:
     """Get employee use case dependency"""
-    return employee_use_case
+    employee_repository = SQLiteEmployeeRepository(database)
+    position_repository = SQLitePositionRepository(database)
+    return EmployeeUseCase(employee_repository, position_repository)
 
 
-async def get_position_use_case() -> PositionUseCase:
+async def get_position_use_case(
+    database: DatabaseConnection = Depends(get_database),
+) -> PositionUseCase:
     """Get position use case dependency"""
-    return position_use_case
+    position_repository = SQLitePositionRepository(database)
+    return PositionUseCase(position_repository)
 
 
-async def get_auth_use_case() -> AuthUseCase:
+async def get_auth_use_case(
+    database: DatabaseConnection = Depends(get_database),
+) -> AuthUseCase:
     """Get auth use case dependency"""
-    return auth_use_case
+    auth_repository = SQLiteAuthRepository(database)
+    return AuthUseCase(auth_repository, jwt_service)
 
 
 async def get_current_user(
