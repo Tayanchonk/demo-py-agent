@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from src.interface import employee_router, position_router, auth_router
+from src.interface import employee_router, position_router, auth_router, address_router, maintenance_router
 from src.interface.dependencies import get_database
 
 
@@ -35,6 +35,8 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(employee_router)
 app.include_router(position_router)
+app.include_router(address_router)
+app.include_router(maintenance_router)
 
 
 @app.get("/", tags=["health"])

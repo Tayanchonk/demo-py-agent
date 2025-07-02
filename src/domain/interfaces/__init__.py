@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Optional
 from uuid import UUID
-from ..entities import Employee, Position
+from ..entities import Employee, Position, Address
 
 
 class EmployeeRepositoryInterface(ABC):
@@ -61,4 +61,32 @@ class AuthRepositoryInterface(ABC):
 
     @abstractmethod
     async def verify_user(self, username: str, password: str) -> bool:
+        pass
+
+
+class AddressRepositoryInterface(ABC):
+    """Repository interface for Address entity"""
+
+    @abstractmethod
+    async def create(self, address: Address) -> Address:
+        pass
+
+    @abstractmethod
+    async def get_by_id(self, address_id: UUID) -> Optional[Address]:
+        pass
+
+    @abstractmethod
+    async def get_by_employee_id(self, employee_id: UUID) -> List[Address]:
+        pass
+
+    @abstractmethod
+    async def get_all(self) -> List[Address]:
+        pass
+
+    @abstractmethod
+    async def update(self, address: Address) -> Optional[Address]:
+        pass
+
+    @abstractmethod
+    async def delete(self, address_id: UUID) -> bool:
         pass

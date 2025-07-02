@@ -55,3 +55,33 @@ class UserCreateDTO(BaseModel):
     """DTO for creating a new user"""
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
+    
+    
+class AddressCreateDTO(BaseModel):
+    """DTO for creating a new address"""
+    employee_id: UUID
+    street: str = Field(..., min_length=1, max_length=200)
+    city: str = Field(..., min_length=1, max_length=100)
+    state: str = Field(..., min_length=1, max_length=100)
+    postal_code: str = Field(..., min_length=1, max_length=20)
+    country: str = Field(..., min_length=1, max_length=100)
+
+
+class AddressUpdateDTO(BaseModel):
+    """DTO for updating an address"""
+    street: Optional[str] = Field(None, min_length=1, max_length=200)
+    city: Optional[str] = Field(None, min_length=1, max_length=100)
+    state: Optional[str] = Field(None, min_length=1, max_length=100)
+    postal_code: Optional[str] = Field(None, min_length=1, max_length=20)
+    country: Optional[str] = Field(None, min_length=1, max_length=100)
+
+
+class AddressResponseDTO(BaseModel):
+    """DTO for address response"""
+    address_id: UUID
+    employee_id: UUID
+    street: str
+    city: str
+    state: str
+    postal_code: str
+    country: str

@@ -9,11 +9,15 @@ from .dtos import (
     LoginDTO,
     TokenResponseDTO,
     UserCreateDTO,
+    AddressCreateDTO,
+    AddressUpdateDTO,
+    AddressResponseDTO,
 )
 from .use_cases import (
     EmployeeUseCase,
     PositionUseCase,
     AuthUseCase,
+    AddressUseCase,
 )
 
 __all__ = [
@@ -26,7 +30,11 @@ __all__ = [
     "LoginDTO",
     "TokenResponseDTO",
     "UserCreateDTO",
+    "AddressCreateDTO",
+    "AddressUpdateDTO",
+    "AddressResponseDTO",
     "EmployeeUseCase",
     "PositionUseCase",
     "AuthUseCase",
+    "AddressUseCase",
 ]

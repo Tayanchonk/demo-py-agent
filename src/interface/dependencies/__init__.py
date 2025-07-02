@@ -5,12 +5,14 @@ from ...infrastructure import (
     SQLiteEmployeeRepository,
     SQLitePositionRepository,
     SQLiteAuthRepository,
+    SQLiteAddressRepository,
     JWTService,
 )
 from ...application import (
     EmployeeUseCase,
     PositionUseCase,
     AuthUseCase,
+    AddressUseCase,
 )
 
 # Security scheme
@@ -30,11 +32,13 @@ jwt_service = JWTService(SECRET_KEY)
 employee_repository = SQLiteEmployeeRepository(db_connection)
 position_repository = SQLitePositionRepository(db_connection)
 auth_repository = SQLiteAuthRepository(db_connection)
+address_repository = SQLiteAddressRepository(db_connection)
 
 # Use cases
 employee_use_case = EmployeeUseCase(employee_repository, position_repository)
 position_use_case = PositionUseCase(position_repository)
 auth_use_case = AuthUseCase(auth_repository, jwt_service)
+address_use_case = AddressUseCase(address_repository, employee_repository)
 
 
 async def get_database():
@@ -55,6 +59,11 @@ async def get_position_use_case() -> PositionUseCase:
 async def get_auth_use_case() -> AuthUseCase:
     """Get auth use case dependency"""
     return auth_use_case
+
+
+async def get_address_use_case() -> AddressUseCase:
+    """Get address use case dependency"""
+    return address_use_case
 
 
 async def get_current_user(
